@@ -85,7 +85,7 @@ Acute_Specialties <- BIHB_aggregate %>%
 Percentage_Occupancy <- Acute_Specialties[c("Quarter", "Year", "Q","Date","HB", "HBName", 
                                              "SpecialtyName","PercentageOccupancy")]
 
-PercentageOccupancy <- PercentageOccupancy %>%
+Percentage_Occupancy <- Percentage_Occupancy %>%
   mutate(URN=paste(Quarter,HB, sep="")) %>%
   mutate(RoundedPercentageOccupancy=round(PercentageOccupancy, digits = 2))
 
@@ -93,12 +93,12 @@ PercentageOccupancy <- PercentageOccupancy %>%
 ## filter and rejoin to transpose specialties
 
 
-pivot_percentage_occupancy = pivot_wider(PercentageOccupancy, id_cols = URN, names_from = SpecialtyName, 
+pivot_percentage_occupancy = pivot_wider(Percentage_Occupancy, id_cols = URN, names_from = SpecialtyName, 
                                          values_from = RoundedPercentageOccupancy)
 
 ## rejoin to dates & HB info
 
-date_lookup <- PercentageOccupancy %>%
+date_lookup <- Percentage_Occupancy %>%
   filter(SpecialtyName=="All Acute")
 
 date_lookup <- date_lookup[c("URN", "Quarter", "Year", "Q","Date","HB", "HBName")]
