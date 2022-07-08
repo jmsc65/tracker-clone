@@ -24,7 +24,7 @@ names(CS)[names(CS) == 'Country'] <- 'HBT'
 
 ## Merge Scotland and boards
 
-cancelledops <- rbind(CBHB, CS)
+cancelledops <- rbind(CS, CBHB)
 
 
 ##Health boards and special health boards
@@ -101,22 +101,6 @@ names(cancelledops)[names(cancelledops) == 'CancelledByPatientReason'] <- 'Cance
 names(cancelledops)[names(cancelledops) == 'NonClinicalCapacityReason'] <- 'Capacity reason'
 names(cancelledops)[names(cancelledops) == 'OtherReason'] <- 'Other reason'
 names(cancelledops)[names(cancelledops) == 'ClinicalReason'] <- 'Clinical reason'
-
-##reorder scotland first
-
-cancelledops$HBT <- factor(cancelledops$HBT, levels = c("S92000003", "S08000015", "S08000016", "S08000017",
-                                                        "S08000018", "S08000019", "S08000020", "S08000021",
-                                                        "S08000022", "S08000023", "S08000024", "S08000025",
-                                                        "S08000026", "S08000027", "S08000028", "S08000029",
-                                                        "S08000030", "S08000031", "S08000032")) 
-
-HB_order <- c("S92000003", "S08000015", "S08000016", "S08000017",
-              "S08000018", "S08000019", "S08000020", "S08000021",
-              "S08000022", "S08000023", "S08000024", "S08000025",
-              "S08000026", "S08000027", "S08000028", "S08000029",
-              "S08000030", "S08000031", "S08000032")
-
-cancelledops <- cancelledops[ order(match(cancelledops$HBT, HB_order)), ]
 
 
 ## 3. Cancelled operations by hospital
