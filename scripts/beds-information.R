@@ -79,8 +79,8 @@ acute_groups_percentage_occupancy <- BIHB_aggregate %>%
   summarise(`% Occupancy`= round(PercentageOccupancy, 1)) %>% 
   pivot_wider(names_from = SpecialtyName, values_from = `% Occupancy`)
   
-names(Acute_specialties_occupancy)[names(Acute_specialties_occupancy) == 'Medical Grouping'] <- 'Medical'
-names(Acute_specialties_occupancy)[names(Acute_specialties_occupancy) == 'Surgery Grouping'] <- 'Surgery'
+names(acute_groups_percentage_occupancy)[names(acute_groups_percentage_occupancy) == 'Medical Grouping'] <- 'Medical'
+names(acute_groups_percentage_occupancy)[names(acute_groups_percentage_occupancy) == 'Surgery Grouping'] <- 'Surgery'
 
 
 
