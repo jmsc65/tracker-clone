@@ -1,3 +1,4 @@
+
 library(tidyverse)
 
 
@@ -64,71 +65,42 @@ n_last <- 2                                # Specify number of characters to ext
 
 
 BIHB_aggregate <- BIHB_aggregate %>%
-  mutate(Year=substr(Quarter, 1, 4)) %>%                                      ##year 
-  mutate(Q=substr(Quarter, nchar(Quarter) - n_last + 1, nchar(Quarter))) %>%  ##q
-  mutate(Date=paste(Q,Year, sep=" "))                                          ##concatenate
-
-## select columns
-
-BIHB_aggregate <- BIHB_aggregate[c("Quarter", "Year", "Q","Date","HB", "HBName", 
-                                   "SpecialtyName","AllStaffedBeddays",
-                                   "TotalOccupiedBeddays", "AverageAvailableStaffedBeds",
-                                   "AverageOccupiedBeds", "PercentageOccupancy")]
-
-## pivot specialties percentage occupancy
-## URN for specialty totals
-
-Acute_Specialties <- BIHB_aggregate %>%
-  filter(SpecialtyName =="All Acute" | SpecialtyName =="Surgery Grouping"| SpecialtyName =="Medical Grouping")
-
-Percentage_Occupancy <- Acute_Specialties[c("Quarter", "Year", "Q","Date","HB", "HBName", 
-                                             "SpecialtyName","PercentageOccupancy")]
-
-Percentage_Occupancy <- Percentage_Occupancy %>%
-  mutate(URN=paste(Quarter,HB, sep="")) %>%
-  mutate(RoundedPercentageOccupancy=round(PercentageOccupancy, digits = 2))
+  mutate(Year=substr(Quarter, 1, 4)) %>%                                       
+  mutate(Q=substr(Quarter, nchar(Quarter) - n_last + 1, nchar(Quarter))) %>% 
+  mutate(Date=paste(Q,Year, sep=" "))                                          
 
 
-## filter and rejoin to transpose specialties
+## percentage occupancy by main acute specialties
 
-
-pivot_percentage_occupancy = pivot_wider(Percentage_Occupancy, id_cols = URN, names_from = SpecialtyName, 
-                                         values_from = RoundedPercentageOccupancy)
-
-## rejoin to dates & HB info
-
-date_lookup <- Percentage_Occupancy %>%
-  filter(SpecialtyName=="All Acute")
-
-date_lookup <- date_lookup[c("URN", "Quarter", "Year", "Q","Date","HB", "HBName")]
-
-pivot_percentage_occupancy <- pivot_percentage_occupancy %>%
-  left_join(date_lookup)
-
-## summary % occupancy and change col names for flourish
-
-acute_groups_percentage_occupancy <- pivot_percentage_occupancy %>%
-  mutate(`Acute Capacity`=100-`All Acute`)
-
-names(acute_groups_percentage_occupancy)[names(acute_groups_percentage_occupancy) == 'Medical Grouping'] <- 'Medical'
-names(acute_groups_percentage_occupancy)[names(acute_groups_percentage_occupancy) == 'Surgery Grouping'] <- 'Surgery'
+acute_groups_percentage_occupancy <- BIHB_aggregate %>% 
+  filter(SpecialtyName == "All Acute" | SpecialtyName =="Surgery Grouping"| 
+           SpecialtyName =="Medical Grouping") %>% 
+  group_by(Quarter, Date, HB, HBName, SpecialtyName) %>% 
+  summarise(`% Occupancy`= round(PercentageOccupancy, 1)) %>% 
+  pivot_wider(names_from = SpecialtyName, values_from = `% Occupancy`)
+  
+names(Acute_specialties_occupancy)[names(Acute_specialties_occupancy) == 'Medical Grouping'] <- 'Medical'
+names(Acute_specialties_occupancy)[names(Acute_specialties_occupancy) == 'Surgery Grouping'] <- 'Surgery'
 
 
 
-## number of beds
-Bed_numbers_Acute <- BIHB_aggregate %>%
-  filter(SpecialtyName=="All Acute") %>%
-  mutate(Unoccupied=AverageAvailableStaffedBeds-AverageOccupiedBeds)
+## number of staffed beds
 
-Bed_numbers_Acute <- Bed_numbers_Acute %>%
-  mutate(`Average Available Staffed Beds`=round(Bed_numbers_Acute$AverageAvailableStaffedBeds, 0)) %>%
-  mutate(`Average Occupied Beds`=round(Bed_numbers_Acute$AverageOccupiedBeds, 0))%>%
-  mutate(`Average Unoccupied Beds`=round(Bed_numbers_Acute$Unoccupied, 0)) %>%
-  mutate(`Percentage Occupied`=round(Bed_numbers_Acute$PercentageOccupancy, 1)) %>%
-  mutate(`Percentage Unoccupied`=round(100-`Percentage Occupied`, 1))
+bed_numbers_acute <- BIHB_aggregate %>% 
+  filter(SpecialtyName == "All Acute") %>% 
+  mutate(Unoccupied = AverageAvailableStaffedBeds-AverageOccupiedBeds)%>%
+  mutate(`Average Available Staffed Beds`= round(AverageAvailableStaffedBeds, 0)) %>%
+  mutate(`Average Occupied Beds` = round(AverageOccupiedBeds, 0))%>%
+  mutate(`Average Unoccupied Beds` = round(AverageAvailableStaffedBeds-AverageOccupiedBeds, 0)) %>%
+  mutate(`Percentage Occupied` = round(PercentageOccupancy, 1)) %>%
+  mutate(`Percentage Unoccupied` = round(100-`Percentage Occupied`, 1)) %>% 
+  group_by(Quarter, Date, HB, HBName, SpecialtyName) %>% 
+  summarise(`Average Available Staffed Beds`,
+            `Average Occupied Beds`, `Average Unoccupied Beds`,
+            `Percentage Occupied`, `Percentage Unoccupied`)
 
 
 ## exports
 
 write.csv(acute_groups_percentage_occupancy, "data/beds-information/percent_occupancy.csv", row.names = FALSE)
-write.csv(Bed_numbers_Acute, "data/beds-information/bed_numbers.csv", row.names = FALSE)
+write.csv(bed_numbers_acute, "data/beds-information/bed_numbers.csv", row.names = FALSE)
