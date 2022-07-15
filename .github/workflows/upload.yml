@@ -23,7 +23,7 @@ jobs:
             "lubridate",
             "readr",
             "Rcpp",
-            "geofacet",
+            "proj4",
             "sf",
             "ggmap",
             "data.table"
