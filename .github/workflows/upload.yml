@@ -10,6 +10,16 @@ jobs:
     steps:
     - uses: actions/checkout@master
     - uses: r-lib/actions/setup-r@master
+    
+# Do stuff
+    - name: Install sf libraries on macOS
+      if: runner.os == 'windows-latest'
+      run: | 
+          brew install proj
+          brew install geos
+          brew install gdal
+
+# Install sf after this point
 # Load libraries
     - name: Install packages
       if: steps.cache.outputs.cache-hit != 'true'
