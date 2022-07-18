@@ -11,14 +11,8 @@ jobs:
     - uses: actions/checkout@master
     - uses: r-lib/actions/setup-r@master
     
-# Do stuff
-    - name: Install sf libraries on macOS
-      if: runner.os == 'windows-latest'
-      run: | 
-          brew install proj
-          brew install geos
-          brew install gdal
-
+    - name: manifest Version
+      uses: rimonhanna/sf-package-version-update-action@master
 
 # Load libraries
     - name: Install packages
@@ -36,7 +30,7 @@ jobs:
             "ggmap",
             "data.table"
           ))
-          install_github("r-spatial/sf")
+     #   install_github("r-spatial/sf")
       shell: Rscript {0}
          
     # Run scripts    
