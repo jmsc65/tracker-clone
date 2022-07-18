@@ -20,6 +20,10 @@ jobs:
           brew install gdal
 
 # Install sf after this point
+    - name: Install sf
+      if: steps.cache.outputs.cache-hit != 'true'
+      run: |
+          install.packages("sf", configure.args = "--with-gdal-lib=/Applications/Postgres.app/Contents/Versions/latest/lib/")
 # Load libraries
     - name: Install packages
       if: steps.cache.outputs.cache-hit != 'true'
