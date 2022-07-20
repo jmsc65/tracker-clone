@@ -1,12 +1,12 @@
+install.packages("Rcpp")
+install.packaged("sf")
+
 ##libraries
 library(tidyverse)
 library(dplyr)
-library(lubridate)                        
-library(readr)   
 library(Rcpp)
 library(sf)
-library(ggmap)
-library(data.table)
+
 
 ## PHS Cancelled Planned operations
 
