@@ -1,5 +1,3 @@
-install.packages("Rcpp")
-install.packaged("sf")
 
 ##libraries
 library(tidyverse)
