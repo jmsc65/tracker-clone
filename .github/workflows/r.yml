@@ -40,6 +40,7 @@ jobs:
             "readr",
             "data.table",
             "Rcpp",
+            "s2",
             "sf",
             "ggmap"
           ))
