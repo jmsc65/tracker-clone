@@ -18,15 +18,11 @@ jobs:
       if: steps.cache.outputs.cache-hit != 'true'
       run: |
           install.packages(c(
-            "curl",
             "tidyverse",
             "dplyr",
-            "lubridate",
-            "readr",
             "Rcpp",
-            "sf",
-            "ggmap",
-            "data.table"
+            "s2",
+            "sf"
           ))
       shell: Rscript {0}
 
