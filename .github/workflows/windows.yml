@@ -21,7 +21,6 @@ jobs:
             "tidyverse",
             "dplyr",
             "Rcpp",
-            "s2",
             "sf"
           ))
       shell: Rscript {0}
